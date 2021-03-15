@@ -1,1 +1,1 @@
-[{"id":"﻿1","amount":"100","currency":"USD","comment":"оплата заказа"},{"id":"2","amount":"123","currency":"EUR","comment":"оплата заказа"}]
+[{"id":"﻿0","amount":"123","comment":"оплата заказа","filename":"orders.json","currency":"EUR","line":"1","result":"OK"},{"id":"1","amount":"3333","comment":"оплата заказа","filename":"orders.json","currency":"EUR","line":"2","result":"OK"}]

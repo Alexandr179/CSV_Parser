@@ -10,17 +10,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Order {
+public class JsonOrder {
 
-    @CsvBindByPosition(position = 0)
-    private String orderId;
+    private String id;
 
-    @CsvBindByPosition(position = 1)
     private String amount;
 
-    @CsvBindByPosition(position = 2)
+    private String comment;
+
+    private String filename;
+
     private String currency;
 
-    @CsvBindByPosition(position = 3)
-    private String comment;
+    private String line;
+
+    private String result;
 }
