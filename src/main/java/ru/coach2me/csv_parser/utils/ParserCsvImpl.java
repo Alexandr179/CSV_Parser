@@ -3,24 +3,30 @@ package ru.coach2me.csv_parser.utils;
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import ru.coach2me.csv_parser.Dto.OrderPojoDto;
+import ru.coach2me.csv_parser.app.Arguments;
 import ru.coach2me.csv_parser.mapper.OrderPojoMapper;
 import ru.coach2me.csv_parser.models.JsonOrder;
 import ru.coach2me.csv_parser.models.Order;
+import ru.coach2me.csv_parser.services.ThreadsService;
 
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * https://mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
  */
 
 @Component("parser_csv")
+//@Scope("prototype")
 public class ParserCsvImpl implements Parser {
 
     @Autowired
@@ -29,6 +35,11 @@ public class ParserCsvImpl implements Parser {
     @Autowired
     private OrderPojoMapper orderPojoMapper;
 
+//    @Autowired
+//    ThreadPoolTaskExecutor taskExecutor;
+
+    @Autowired
+    ThreadsService threadsService;
 
     public void parse(String csvFileName, String jsonFileName) {
         String csvFileDir = environment.getProperty("files.dir") + csvFileName;
@@ -98,4 +109,5 @@ public class ParserCsvImpl implements Parser {
     private void toOrderPojoDto(Order order) {
         OrderPojoDto orderPojoDto = orderPojoMapper.toDto(order);
     }
+
 }

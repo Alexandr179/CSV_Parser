@@ -11,6 +11,6 @@ import java.io.FileNotFoundException;
 @Component("parser_XLSX")
 public class ParserXLSXImpl implements Parser {
 
-    public void parse(String csvFileName, String jsonFileName) throws FileNotFoundException {
+    public void parse(String csvFileName, String jsonFileName) {
     }
 }
