@@ -28,13 +28,13 @@ public class ApplicationConfig {
     }
 
     //https://mkyong.com/spring/spring-and-java-thread-example/
-//    @Bean
-//    public ThreadPoolTaskExecutor taskExecutor() {
-//        ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
-//        pool.setCorePoolSize(5);
-//        pool.setMaxPoolSize(10);
-//        pool.setWaitForTasksToCompleteOnShutdown(true);
-//        return pool;
-//    }
+    @Bean
+    public ThreadPoolTaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+        pool.setCorePoolSize(5);
+        pool.setMaxPoolSize(10);
+        pool.setWaitForTasksToCompleteOnShutdown(true);
+        return pool;
+    }
 
 }

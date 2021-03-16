@@ -20,4 +20,13 @@ public class OrderPojoDto {
     private FastMoney amount;
 
     private String comment;
+
+    @Override
+    public String toString() {
+        return "OrderPojoDto{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }
