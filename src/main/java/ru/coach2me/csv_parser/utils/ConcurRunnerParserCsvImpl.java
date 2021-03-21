@@ -14,6 +14,7 @@ import ru.coach2me.csv_parser.utils.concrurencyUtils.ConcurrencyJsonWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -34,7 +35,7 @@ public class ConcurRunnerParserCsvImpl implements Parser {
     public static String jsonFile;
     public static String csvFileName;
     public static String jsonFileName;
-    public static Collection<OrderPojoDto> orderPojoDtoList = new CopyOnWriteArrayList<>();
+    public static ConcurrentLinkedQueue<OrderPojoDto> orderPojoDtoQueue = new ConcurrentLinkedQueue<>();
 
 
     public void parse(String csvFileName, String jsonFileName) throws InterruptedException {
@@ -57,8 +58,22 @@ public class ConcurRunnerParserCsvImpl implements Parser {
 
         if (concurrencyCsvReader.csvReader != null){
             taskExecutor.newThread(reader).start();
-            Thread.sleep(200);// 100 ..мало
+            Thread.sleep(200);
             taskExecutor.newThread(writer).start();
         }
+    }
+
+
+
+    public synchronized static OrderPojoDto pollAtOrderPojoDtoQueue() {
+        return orderPojoDtoQueue.poll();
+    }
+
+    public synchronized static void addToOrderPojoDtoQueue(OrderPojoDto orderPojoDto) {
+        ConcurRunnerParserCsvImpl.orderPojoDtoQueue.add(orderPojoDto);
+    }
+
+    public synchronized static boolean isEmptyPojoDtoQueue() {
+        return ConcurRunnerParserCsvImpl.orderPojoDtoQueue.isEmpty();
     }
 }

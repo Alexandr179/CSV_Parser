@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import static ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl.jsonFileName;
+import static ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl.orderPojoDtoQueue;
 
 /**
  * https://spring.io/guides/gs/async-method/
@@ -31,11 +32,12 @@ public class ConcurrencyJsonWriter implements Runnable {
     @Autowired
     ThreadPoolTaskExecutor taskExecutor;
 
+    private Integer timeCounter;
+
     @SneakyThrows
     @Override
     public synchronized void run() {
-        System.out.println("Thread is: " + Thread.currentThread().getName());
-
+//        System.out.println("Thread is: " + Thread.currentThread().getName());
         String jsonFile = ConcurRunnerParserCsvImpl.jsonFile;
         Gson gson = new Gson();
         int lineNumber = 1;
@@ -43,10 +45,17 @@ public class ConcurrencyJsonWriter implements Runnable {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(jsonFile))) {
             bufferedWriter.append('[');
 
-            Iterator<OrderPojoDto> orderPojoDtoIterator = ConcurRunnerParserCsvImpl.orderPojoDtoList.iterator();
+            while (ConcurRunnerParserCsvImpl.isEmptyPojoDtoQueue()) {
+                wait();
+            }
+
+            Iterator<OrderPojoDto> orderPojoDtoIterator = ConcurRunnerParserCsvImpl.orderPojoDtoQueue.iterator();
 
             while (orderPojoDtoIterator.hasNext()) {
                 OrderPojoDto orderPojoDto = orderPojoDtoIterator.next();
+                ConcurRunnerParserCsvImpl.pollAtOrderPojoDtoQueue();
+
+//              System.out.println("Size of orderPojoDtoQueue (..by ConcurrencyJsonWriter): " + orderPojoDtoQueue.size());
                 Order order = orderPojoMapper.toEntity(orderPojoDto);
                 JsonOrder jsonOrder = getJsonOrderByOrder(lineNumber, order);
 
@@ -62,8 +71,13 @@ public class ConcurrencyJsonWriter implements Runnable {
                 if (orderPojoDtoIterator.hasNext()) {
                     bufferedWriter.append(',');
                 }
+
+                while (ConcurRunnerParserCsvImpl.isEmptyPojoDtoQueue()){
+                    wait(100);
+                }
             }
             bufferedWriter.append(']');
+            Thread.currentThread().stop();
         } catch (IOException e) {
             throw new IllegalArgumentException("Was wrong to writing File: " + e);
         }

@@ -1,6 +1,7 @@
 package ru.coach2me.csv_parser.utils.concrurencyUtils;
 
 import com.opencsv.CSVReader;
+import org.modelmapper.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -40,8 +41,7 @@ public class ConcurrencyCsvReader implements Runnable {
      */
     @Override
     public void run() {// вручную выст. synchronized....
-        System.out.println("Thread is readerThread: " + Thread.currentThread().getName());
-
+//        System.out.println("Thread is readerThread: " + Thread.currentThread().getName());
         String csvFile = ConcurRunnerParserCsvImpl.csvFile;
 
         int lineNumber = 1;
@@ -55,16 +55,21 @@ public class ConcurrencyCsvReader implements Runnable {
                     JsonOrder outOrder = getJsonOrderByOrder(lineNumber, order);
                     try {
                         OrderPojoDto orderPojoDto = orderPojoMapper.toDto(order);
-                        ConcurRunnerParserCsvImpl.orderPojoDtoList.add(orderPojoDto);
+                        ConcurRunnerParserCsvImpl.addToOrderPojoDtoQueue(orderPojoDto);
+                        notify();
 
-                    } catch (Exception e) {
+                    } catch (MappingException e) {
                         outOrder.setFilename("csvFile");
                         outOrder.setResult("Wrong parsing field(s) order.csv: " + e.getMessage());
+                    } catch (Exception e) {
+//                        outOrder.setResult("Wrong Concurrency with parsing field(s) order.csv: " + e.getMessage());
                     }
+
                     System.out.println(outOrder);
                     lineNumber += lineNumber;
                 }
             }
+            Thread.currentThread().stop();
         } catch (IOException e) {
             throw new IllegalArgumentException("Was wrong to writing File: " + e);
         }
