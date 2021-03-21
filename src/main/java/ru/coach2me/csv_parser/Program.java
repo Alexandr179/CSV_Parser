@@ -7,10 +7,11 @@ import ru.coach2me.csv_parser.app.Arguments;
 import ru.coach2me.csv_parser.config.ApplicationConfig;
 import ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl;
 import ru.coach2me.csv_parser.utils.Parser;
+import ru.coach2me.csv_parser.utils.TempConcurrencyParserCsvImpl;
 
 class Program {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
         Arguments arguments = new Arguments();
@@ -25,6 +26,7 @@ class Program {
 // ----------- Common implementation -------------------------------
 //        Parser parser = context.getBean(ParserCsvImpl.class);
 //        parser.parse(csvFileName, jsonFileName);
+
 
 // ----------- Concurrency implementation -------------------------------
         Parser parser = context.getBean(ConcurRunnerParserCsvImpl.class);

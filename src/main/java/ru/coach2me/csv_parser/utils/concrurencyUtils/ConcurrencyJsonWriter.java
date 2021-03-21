@@ -11,13 +11,10 @@ import ru.coach2me.csv_parser.mapper.OrderPojoMapper;
 import ru.coach2me.csv_parser.models.JsonOrder;
 import ru.coach2me.csv_parser.models.Order;
 import ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
-
-import static ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl.csvFileName;
 import static ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl.jsonFileName;
 
 /**
@@ -37,6 +34,8 @@ public class ConcurrencyJsonWriter implements Runnable {
     @SneakyThrows
     @Override
     public synchronized void run() {
+        System.out.println("Thread is: " + Thread.currentThread().getName());
+
         String jsonFile = ConcurRunnerParserCsvImpl.jsonFile;
         Gson gson = new Gson();
         int lineNumber = 1;
@@ -45,9 +44,9 @@ public class ConcurrencyJsonWriter implements Runnable {
             bufferedWriter.append('[');
 
             Iterator<OrderPojoDto> orderPojoDtoIterator = ConcurRunnerParserCsvImpl.orderPojoDtoList.iterator();
+
             while (orderPojoDtoIterator.hasNext()) {
                 OrderPojoDto orderPojoDto = orderPojoDtoIterator.next();
-
                 Order order = orderPojoMapper.toEntity(orderPojoDto);
                 JsonOrder jsonOrder = getJsonOrderByOrder(lineNumber, order);
 

@@ -10,6 +10,7 @@ import ru.coach2me.csv_parser.mapper.OrderPojoMapper;
 import ru.coach2me.csv_parser.models.JsonOrder;
 import ru.coach2me.csv_parser.models.Order;
 import ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
@@ -35,10 +36,12 @@ public class ConcurrencyCsvReader implements Runnable {
     /**
      * in Concurrency возможно ..обращение к  полям классов, сторонним для потока только напрямую **
      * но НЕ через   @Autowired
-     *               ConcurRunnerParserCsvImpl concurrencyParserCsv;
+     * ConcurRunnerParserCsvImpl concurrencyParserCsv;
      */
     @Override
-    public synchronized void run() {// вручную выст. synchronized....
+    public void run() {// вручную выст. synchronized....
+        System.out.println("Thread is readerThread: " + Thread.currentThread().getName());
+
         String csvFile = ConcurRunnerParserCsvImpl.csvFile;
 
         int lineNumber = 1;
@@ -70,18 +73,18 @@ public class ConcurrencyCsvReader implements Runnable {
 
     private JsonOrder getJsonOrderByOrder(int lineNumber, Order order) {
         return JsonOrder.builder()
-                                .id(order.getOrderId())
-                                .amount(order.getAmount())
-                                .currency(order.getCurrency())
-                                .comment(order.getComment())
-                                .filename(csvFileName)
-                                .line(Integer.toString(lineNumber))
-                                .result("OK")
-                                .build();
+                .id(order.getOrderId())
+                .amount(order.getAmount())
+                .currency(order.getCurrency())
+                .comment(order.getComment())
+                .filename(csvFileName)
+                .line(Integer.toString(lineNumber))
+                .result("OK")
+                .build();
     }
 
-    Order getOrderByStrings(String[] orderField){
-        return  Order.builder()// (TЗ) *Примечание:* все поля обязательны
+    Order getOrderByStrings(String[] orderField) {
+        return Order.builder()// (TЗ) *Примечание:* все поля обязательны
                 .orderId(orderField[0])
                 .amount(orderField[1])
                 .currency(orderField[2])
@@ -89,11 +92,3 @@ public class ConcurrencyCsvReader implements Runnable {
                 .build();
     }
 }
-
-
-
-
-
-//                        System.out.println(orderPojoDto);
-//                        System.out.println("Last orderPojoDtoList is: " +
-//                                ConcurRunnerParserCsvImpl.orderPojoDtoList.lastIndexOf(orderPojoDto));
