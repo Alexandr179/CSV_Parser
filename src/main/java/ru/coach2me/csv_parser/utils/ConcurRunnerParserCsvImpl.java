@@ -13,9 +13,7 @@ import ru.coach2me.csv_parser.utils.concrurencyUtils.ConcurrencyCsvReader;
 import ru.coach2me.csv_parser.utils.concrurencyUtils.ConcurrencyJsonWriter;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * https://www.youtube.com/watch?v=zxZ0BXlTys0&t=2369s
@@ -35,7 +33,7 @@ public class ConcurRunnerParserCsvImpl implements Parser {
     public static String jsonFile;
     public static String csvFileName;
     public static String jsonFileName;
-    public static ConcurrentLinkedQueue<OrderPojoDto> orderPojoDtoQueue = new ConcurrentLinkedQueue<>();
+    public static final ConcurrentLinkedQueue<OrderPojoDto> orderPojoDtoQueue = new ConcurrentLinkedQueue<>();
 
 
     public void parse(String csvFileName, String jsonFileName) throws InterruptedException {
@@ -64,16 +62,23 @@ public class ConcurRunnerParserCsvImpl implements Parser {
     }
 
 
+    // Synchronized by Object...
 
-    public synchronized static OrderPojoDto pollAtOrderPojoDtoQueue() {
-        return orderPojoDtoQueue.poll();
+    public synchronized static void pollAtOrderPojoDtoQueue() {
+        synchronized (orderPojoDtoQueue){
+            orderPojoDtoQueue.poll();
+        }
     }
 
     public synchronized static void addToOrderPojoDtoQueue(OrderPojoDto orderPojoDto) {
-        ConcurRunnerParserCsvImpl.orderPojoDtoQueue.add(orderPojoDto);
+        synchronized (orderPojoDtoQueue){
+            ConcurRunnerParserCsvImpl.orderPojoDtoQueue.add(orderPojoDto);
+        }
     }
 
     public synchronized static boolean isEmptyPojoDtoQueue() {
-        return ConcurRunnerParserCsvImpl.orderPojoDtoQueue.isEmpty();
+        synchronized (orderPojoDtoQueue){
+            return ConcurRunnerParserCsvImpl.orderPojoDtoQueue.isEmpty();
+        }
     }
 }

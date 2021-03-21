@@ -36,7 +36,7 @@ public class ConcurrencyJsonWriter implements Runnable {
 
     @SneakyThrows
     @Override
-    public synchronized void run() {
+    public void run() {
 //        System.out.println("Thread is: " + Thread.currentThread().getName());
         String jsonFile = ConcurRunnerParserCsvImpl.jsonFile;
         Gson gson = new Gson();
@@ -46,7 +46,7 @@ public class ConcurrencyJsonWriter implements Runnable {
             bufferedWriter.append('[');
 
             while (ConcurRunnerParserCsvImpl.isEmptyPojoDtoQueue()) {
-                wait();
+                Thread.currentThread().wait();
             }
 
             Iterator<OrderPojoDto> orderPojoDtoIterator = ConcurRunnerParserCsvImpl.orderPojoDtoQueue.iterator();
@@ -73,7 +73,10 @@ public class ConcurrencyJsonWriter implements Runnable {
                 }
 
                 while (ConcurRunnerParserCsvImpl.isEmptyPojoDtoQueue()){
-                    wait(100);
+                    try {
+                        wait(100);// pause .. даем наполниться queue..
+                    } catch (IllegalMonitorStateException ignored){
+                    }
                 }
             }
             bufferedWriter.append(']');

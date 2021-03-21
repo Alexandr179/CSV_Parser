@@ -55,6 +55,7 @@ public class ConcurrencyCsvReader implements Runnable {
                     JsonOrder outOrder = getJsonOrderByOrder(lineNumber, order);
                     try {
                         OrderPojoDto orderPojoDto = orderPojoMapper.toDto(order);
+
                         ConcurRunnerParserCsvImpl.addToOrderPojoDtoQueue(orderPojoDto);
                         notify();
 
