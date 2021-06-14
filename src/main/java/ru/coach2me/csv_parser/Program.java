@@ -9,7 +9,7 @@ import ru.coach2me.csv_parser.utils.ConcurRunnerParserCsvImpl;
 import ru.coach2me.csv_parser.utils.Parser;
 import ru.coach2me.csv_parser.utils.TempConcurrencyParserCsvImpl;
 
-class Program {
+public class Program {
 
     public static void main(String[] args) throws InterruptedException {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);

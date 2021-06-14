@@ -74,7 +74,7 @@ public class ConcurrencyJsonWriter implements Runnable {
 
                 while (ConcurRunnerParserCsvImpl.isEmptyPojoDtoQueue()){
                     try {
-                        wait(100);// pause .. даем наполниться queue..
+                        wait(50);// pause .. даем наполниться queue..
                     } catch (IllegalMonitorStateException ignored){
                     }
                 }
